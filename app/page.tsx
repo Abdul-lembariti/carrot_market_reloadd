@@ -1,30 +1,19 @@
 export default function Home() {
   return (
-    <main className="bg-gray-300 h-screen flex items-center justify-center p-5 ">
-      <div className="bg-white shadow-lg p-5 rounded-xl w-full max-w-screen-sm ">
-        <div className="flex justify-between">
-          <div className="flex flex-col ">
-            <span className="font-bold  text-gray-600 -mb-2 ">In transit</span>
-            <span className="font-semibold text-3xl ">Coolblue</span>
-          </div>
-          <div className="size-12 bg-orange-600 rounded-full" />
-        </div>
-        <div className="flex gap-4 items-center my-2">
-          <span className="text-white bg-green-400 p-1 rounded-2xl w-20 text-center uppercase font-medium hover:bg-green-500 transition hover:scale-125">
-            Today
-          </span>
-          <span className="text-lg font-semibold ">9:30-10:30</span>
-        </div>
-        <div className="relative">
-          <div className="bg-gray-200 absolute w-full h-2 rounded-full" />
-          <div className="bg-green-400 absolute w-2/3 h-2 rounded-full" />
-        </div>
-        <div className="flex justify-between items-center font-light  mt-5 text-gray-600 ">
-          <span>Expected</span>
-          <span>Sorting</span>
-          <span>In transit </span>
-          <span className="text-gray-400 ">Delivered</span>
-        </div>
+    <main className="bg-gray-300 h-screen flex items-center justify-center p-5 sm:bg-red-100 md:bg-red-300 lg:bg-red-500">
+      <div className="bg-white shadow-lg p-5 rounded-xl w-full max-w-screen-sm flex flex-col gap-2 *:outline-none has-[:invalid]:bg-red-300">
+        <input
+          className="w-full rounded-full py-3 bg-gray-200 pl-5  focus:ring-green-300 focus:ring-2 focus:ring-offset-2 transition-shadow placeholder:drop-shadow invalid:focus:ring-red-500 peer"
+          type="text"
+          placeholder="Enter email here "
+          required
+        />
+        <span className="text-red-500 font-medium hidden peer-invalid:block">
+          Email is required
+        </span>
+        <button className="bg-gray-500 to-purple-300 text-white py-2 rounded-full active:scale-90 transition-transform font-medium focus:scale-90  md:px-10 peer-required:bg-green-500">
+          Login
+        </button>
       </div>
     </main>
   )
