@@ -5,9 +5,9 @@ export default function Home() {
         {['Nahul', 'Me', 'You', 'Yourself', ''].map((person, index) => (
           <div
             key={index}
-            className="flex items-center gap-5 p-2.5 rounded-lg odd:bg-gray-100 even:bg-cyan-100 border-b-2 pb-5 last:border-0 last:pb-0">
+            className="flex items-center gap-5 p-2.5 rounded-lg odd:bg-gray-100 even:bg-cyan-100 border-b-2 pb-5 last:border-0 last:pb-0 group">
             <div className="size-10 bg-blue-300 rounded-full" />
-            <span className="text-lg font-medium empty:w-24 empty:h-3 empty:rounded-full empty:bg-gray-300 empty:animate-pulse">
+            <span className="text-lg font-medium empty:w-24 empty:h-3 empty:rounded-full empty:bg-gray-300 empty:animate-pulse group-hover:text-red-500">
               {person}
             </span>
             <div className="size-6 bg-red-500 text-white flex items-center justify-center rounded-full relative">
