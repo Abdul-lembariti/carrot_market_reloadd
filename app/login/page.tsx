@@ -1,44 +1,40 @@
 'use client'
 
-import FormInput from '@/component/form-input'
-import FormButton from '@/component/form-btn'
 import SocialLogin from '@/component/social-login'
+import { useFormState } from 'react-dom'
+import Input from '@/component/input'
+import Button from '@/component/button'
+import { login } from './action'
+import { PASSWORD_MIN_LENGTH } from '../../lib/constants'
 
 export default function Login() {
-  const onClick = async () => {
-    const response = await fetch('/www/users', {
-      method: 'POST',
-      body: JSON.stringify({
-        username: 'dula',
-        password: '123',
-      }),
-    })
-    console.log(await response.json())
-  }
-
+  // const [state, action] = useFormState(login, null)
+  const [state, action] = useFormState(login, null)
   return (
     <div className="flex flex-col gap-10 py-8 px-6 min-h-screen">
       <div className="flex flex-col gap-2 *:font-medium">
         <h1 className="text-2xl">Carrot Market Login</h1>
         <h2 className="text-xl">Login with Email and Password</h2>
       </div>
-      <form className="flex flex-col gap-3">
-        <FormInput
+      <form action={action} className="flex flex-col gap-3">
+        <Input
+          name="email"
           type="email"
           placeholder="Email"
           required={true}
-          errors={['']}
+          errors={state?.fieldErrors.email}
         />
-        <FormInput
+        <Input
+          name="password"
           type="password"
+          min={PASSWORD_MIN_LENGTH}
           placeholder="Password"
           required={true}
-          errors={['']}
+          errors={state?.fieldErrors.password}
         />
+        <Button text="Login" />
       </form>
-      <span onClick={onClick}>
-        <FormButton loading={false} text="Login" />
-      </span>
+      <span></span>
       <SocialLogin />
     </div>
   )
