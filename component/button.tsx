@@ -15,5 +15,3 @@ export default function Button({ text }: IFormBtn) {
     </button>
   )
 }
-
-
