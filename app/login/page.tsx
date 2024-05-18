@@ -8,7 +8,6 @@ import { login } from './action'
 import { PASSWORD_MIN_LENGTH } from '../../lib/constants'
 
 export default function Login() {
-  // const [state, action] = useFormState(login, null)
   const [state, action] = useFormState(login, null)
   return (
     <div className="flex flex-col gap-10 py-8 px-6 min-h-screen">

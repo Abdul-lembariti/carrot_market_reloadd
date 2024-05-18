@@ -3,9 +3,8 @@ import { z } from 'zod'
 import { PASSWORD_MIN_LENGTH, PASSWORD_REGEX } from '@/lib/constants'
 import db from '../../lib/db'
 import bcrypt from 'bcrypt'
-import { getIronSession } from 'iron-session'
-import { cookies } from 'next/headers'
 import { redirect } from 'next/navigation'
+import getSession from '../../lib/session'
 
 const checkPasswords = ({
   password,
@@ -14,31 +13,6 @@ const checkPasswords = ({
   password: string
   confirmPassword: string
 }) => password === confirmPassword
-
-const checkUniqueUsername = async (username: string) => {
-  const user = await db.user.findUnique({
-    where: {
-      username,
-    },
-    select: {
-      id: true,
-    },
-  })
-
-  return !Boolean(user)
-}
-
-const checkUniqueEmail = async (email: string) => {
-  const user = await db.user.findUnique({
-    where: {
-      email,
-    },
-    select: {
-      id: true,
-    },
-  })
-  return Boolean(user) === false
-}
 
 const formSchema = z
   .object({
@@ -53,20 +27,50 @@ const formSchema = z
       .refine(
         (username) => !username.match(/[A-Z]/),
         'Username should be in lowercase'
-      )
-
-      .refine(checkUniqueUsername, 'This username is already taken'),
-    email: z
-      .string()
-      .email()
-      .toLowerCase()
-      .refine(
-        checkUniqueEmail,
-        'There is an account already registered with that email.'
       ),
+
+    email: z.string().email().toLowerCase(),
     password: z.string().min(PASSWORD_MIN_LENGTH),
     //.regex(PASSWORD_REGEX, PASSWORD_REGEX_ERROR),
     confirmPassword: z.string().min(PASSWORD_MIN_LENGTH),
+  })
+  .superRefine(async ({ username }, ctx) => {
+    const user = await db.user.findUnique({
+      where: {
+        username,
+      },
+      select: {
+        id: true,
+      },
+    })
+    if (user) {
+      ctx.addIssue({
+        code: 'custom',
+        message: 'This username already taken',
+        path: ['username'],
+        fatal: true,
+      })
+      return z.NEVER
+    }
+  })
+  .superRefine(async ({ email }, ctx) => {
+    const user = await db.user.findUnique({
+      where: {
+        email,
+      },
+      select: {
+        id: true,
+      },
+    })
+    if (user) {
+      ctx.addIssue({
+        code: 'custom',
+        message: 'This email already taken',
+        path: ['email'],
+        fatal: true,
+      })
+      return z.NEVER
+    }
   })
   .refine(checkPasswords, {
     message: 'Password dont match',
@@ -82,6 +86,7 @@ export async function createAccount(prevState: any, formData: FormData) {
   }
   const result = await formSchema.safeParseAsync(data)
   if (!result.success) {
+    console.log()
     return result.error.flatten()
   } else {
     const hashedpassword = await bcrypt.hash(result.data.password, 12)
@@ -96,15 +101,9 @@ export async function createAccount(prevState: any, formData: FormData) {
         id: true,
       },
     })
-    // log the user in
-    const cookie = await getIronSession(cookies(), {
-      cookieName: 'delicious-karrot',
-      password: process.env.COOKIE_PASSWORD!,
-    })
-    //@ts-ignore
-    cookie.id = user.id
-    await cookie.save()
-    // redirect "/home"
+    const session = await getSession()
+    session.id = user.id
+    await session.save()
     redirect('/profile')
   }
 }
