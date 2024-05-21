@@ -11,6 +11,7 @@ const publicOnlyUrls: Routes = {
   '/login': true,
   '/sms': true,
   '/create-account': true,
+  
   '/api/auth/signin': true,
   '/api/auth/callback/google': true,
   '/api/auth/session': true,

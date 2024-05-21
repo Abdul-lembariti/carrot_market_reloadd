@@ -5,8 +5,11 @@ import './globals.css'
 const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
-  title: 'Carrot Market',
-  description: 'Reloaded Carrot Market',
+  title: {
+    template: '%s | Karrot Market',
+    default: 'Karrot Market',
+  },
+  description: 'Sale and buy with Karrot Market',
 }
 
 export default function RootLayout({

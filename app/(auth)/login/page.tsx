@@ -5,7 +5,7 @@ import { useFormState } from 'react-dom'
 import Input from '@/component/input'
 import Button from '@/component/button'
 import { login } from './action'
-import { PASSWORD_MIN_LENGTH } from '../../lib/constants'
+import { PASSWORD_MIN_LENGTH } from '../../../lib/constants'
 
 export default function Login() {
   const [state, action] = useFormState(login, null)

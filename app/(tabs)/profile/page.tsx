@@ -1,6 +1,6 @@
 import { notFound, redirect } from 'next/navigation'
-import db from '../../lib/db'
-import getSession from '../../lib/session'
+import db from '../../../lib/db'
+import getSession from '../../../lib/session'
 
 async function getUser() {
   const session = await getSession()
@@ -34,5 +34,3 @@ export default async function Profile() {
     </div>
   )
 }
-
-

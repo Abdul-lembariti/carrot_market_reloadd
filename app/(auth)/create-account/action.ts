@@ -1,10 +1,10 @@
 'use server'
 import { z } from 'zod'
 import { PASSWORD_MIN_LENGTH, PASSWORD_REGEX } from '@/lib/constants'
-import db from '../../lib/db'
+import db from '../../../lib/db'
 import bcrypt from 'bcrypt'
 import { redirect } from 'next/navigation'
-import getSession from '../../lib/session'
+import getSession from '../../../lib/session'
 
 const checkPasswords = ({
   password,

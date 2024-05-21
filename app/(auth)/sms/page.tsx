@@ -1,7 +1,7 @@
 'use client'
 import { useFormState } from 'react-dom'
-import Button from '../../component/button'
-import Input from '../../component/input'
+import Button from '../../../component/button'
+import Input from '../../../component/input'
 import { smsVerification } from './action'
 
 const intialState = {
