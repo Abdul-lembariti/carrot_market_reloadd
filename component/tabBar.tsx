@@ -31,6 +31,8 @@ export default function TabBar() {
       borderColor="gray"
       color="white"
       paddingX="5px"
+      bgColor="#80808075
+      "
       paddingY="3px"
       gridTemplateColumns="repeat(5, 100px) ">
       <Link

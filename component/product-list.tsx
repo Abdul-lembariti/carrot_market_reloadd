@@ -1,9 +1,9 @@
 'use client'
 
-import { Box, Button } from '@chakra-ui/react'
+import { Box, Text } from '@chakra-ui/react'
 import { IntialProducts } from '../app/(tabs)/products/page'
 import ListProduct from './list-product'
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import getMoreProducts from '../app/(tabs)/products/actions'
 
 interface ProductListProps {
@@ -15,30 +15,53 @@ export default function ProductList({ intialProducts }: ProductListProps) {
   const [loading, setLoading] = useState(false)
   const [page, setPage] = useState(0)
   const [isLastPage, setIsLastPage] = useState(false)
+  const trigger = useRef<HTMLParagraphElement>(null)
 
-  const onLoadMoreProducts = async () => {
-    setLoading(true)
-    const newProducts = await getMoreProducts(page + 1)
-    if (newProducts.length !== 0) {
-      setPage((prev) => prev + 1)
-      setProducts((prev) => [...prev, ...newProducts])
-    } else {
-      setIsLastPage(true)
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      async (
+        entries: IntersectionObserverEntry[],
+        observer: IntersectionObserver
+      ) => {
+        const element = entries[0]
+        if (element.isIntersecting && trigger.current) {
+          observer.unobserve(trigger.current)
+          setLoading(true)
+          const newProducts = await getMoreProducts(page + 1)
+          if (newProducts.length !== 0) {
+            setPage((prev) => prev + 1)
+            setProducts((prev) => [...prev, ...newProducts])
+          } else {
+            setIsLastPage(true)
+          }
+          setLoading(false)
+        }
+      },
+      {
+        threshold: 1.0,
+      }
+    )
+    if (trigger.current) {
+      observer.observe(trigger.current)
     }
-    setLoading(false)
-  }
+    return () => {
+      observer.disconnect()
+    }
+  }, [page])
 
   return (
     <Box padding="1.25rem" display="flex" flexDirection="column" gap="1.25rem">
       {products.map((product) => (
         <ListProduct key={product.id} {...product} />
       ))}
-      {isLastPage ? (
-        'No more items'
-      ) : (
-        <Button
-          onClick={onLoadMoreProducts}
-          disabled={loading}
+
+      {!isLastPage ? (
+        <Text
+          ref={trigger}
+          style={{
+            marginTop: `${page + 1 * 900}vh`,
+          }}
+          mb="10rem"
           fontSize="sm"
           fontWeight="semibold"
           bgColor="orangered"
@@ -54,8 +77,8 @@ export default function ProductList({ intialProducts }: ProductListProps) {
             },
           }}>
           {loading ? 'Get Products..' : 'Load More'}
-        </Button>
-      )}
+        </Text>
+      ) : null}
     </Box>
   )
 }
