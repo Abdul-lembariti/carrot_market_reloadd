@@ -1,10 +1,10 @@
-import { Box } from '@chakra-ui/react'
+import { Box, Flex } from '@chakra-ui/react'
 
 export default function Loading() {
   return (
-    <div className="p-5 flex flex-col gap-5 animate-pulse">
+    <Box className="p-5 flex flex-col gap-5 animate-pulse">
       {[...Array(10)].map((_, index) => (
-        <div key={index} className="flex *:rounded-md gap-5 ">
+        <Flex key={index} gap="1.25rem" borderRadius="md">
           <Box
             bgColor="grey"
             width="7rem"
@@ -26,8 +26,8 @@ export default function Loading() {
             />
             <Box bgColor="grey" borderRadius="6px" height="20px" width="50px" />
           </Box>
-        </div>
+        </Flex>
       ))}
-    </div>
+    </Box>
   )
 }
