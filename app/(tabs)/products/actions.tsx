@@ -1,8 +1,9 @@
-'use server '
+'use server'
 
 import db from '../../../lib/db'
 
 export default async function getMoreProducts(page: number) {
+  const productsPerPage = 1 
   const products = await db.product.findMany({
     select: {
       title: true,
@@ -11,8 +12,8 @@ export default async function getMoreProducts(page: number) {
       photo: true,
       id: true,
     },
-    skip: page*1,
-    take: 1,
+    skip: page * productsPerPage,
+    take: productsPerPage,
     orderBy: {
       createdAt: 'asc',
     },
