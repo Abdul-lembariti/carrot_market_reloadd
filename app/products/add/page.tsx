@@ -5,9 +5,20 @@ import Input from '../../../component/input'
 import Button from '../../../component/button'
 import { useState } from 'react'
 import { uploadProduct } from './action'
+import { useFormState } from 'react-dom'
+import { useForm } from 'react-hook-form'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { productSchema, ProductType } from './schema'
 
 export default function AddProduct() {
   const [prev, setPrev] = useState('')
+  const {
+    register,
+    formState: { errors },
+  } = useForm<ProductType>({
+    resolver: zodResolver(productSchema),
+  })
+
   const onImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const {
       target: { files },
@@ -19,9 +30,12 @@ export default function AddProduct() {
     const url = URL.createObjectURL(file)
     setPrev(url)
   }
+
+  const [state, action] = useFormState(uploadProduct, null)
+
   return (
     <Box>
-      <form action={uploadProduct} className="p-5 flex flex-col gap-5">
+      <form action={action} className="p-5 flex flex-col gap-5">
         <label
           htmlFor="photo"
           className="border-2 aspect-square flex items-center justify-center flex-col text-neutral-300 border-neutral-300 rounded-md border-dashed cursor-pointer bg-center bg-cover"
@@ -32,7 +46,7 @@ export default function AddProduct() {
             <>
               <PhotoIcon width="4rem" />
               <Box textColor="gray.50" fontSize="small">
-                Add Image
+                Add Image {state?.fieldErrors.photo}
               </Box>
             </>
           ) : null}
@@ -45,25 +59,30 @@ export default function AddProduct() {
           hidden
         />
         <Input
-          name="title"
           type="text"
           placeholder="enter the name of product"
           required
+          errors={[errors.title?.message ?? '']}
+          {...register('title')}
         />
         <Input
-          name="price"
           type="number"
           placeholder="enter the price of product"
           required
+          errors={[errors.price?.message ?? '']}
+          {...register('price')}
         />
         <Input
-          name="description"
           type="text"
           required
           placeholder="Enter the description"
+          errors={[errors.description?.message ?? '']}
+          {...register('description')}
         />
         <Button text="Upload Product" />
       </form>
     </Box>
   )
 }
+
+

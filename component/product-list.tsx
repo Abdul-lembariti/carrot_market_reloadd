@@ -3,8 +3,8 @@
 import { Box, Button, Text } from '@chakra-ui/react'
 import { useState } from 'react'
 import ListProduct from './list-product'
-import getMoreProducts from '../app/(tabs)/products/actions'
-import { IntialProducts } from '../app/(tabs)/products/page'
+import getMoreProducts from '../app/(tabs)/home/actions'
+import { IntialProducts } from '../app/(tabs)/home/page'
 
 interface ProductListProps {
   initialProducts: IntialProducts

@@ -1,5 +1,4 @@
 import { NextRequest, NextResponse } from 'next/server'
-import db from './lib/db'
 import getSession from './lib/session'
 
 interface Routes {
@@ -23,8 +22,7 @@ const publicOnlyUrls: Routes = {
 
 export async function middleware(request: NextRequest) {
   const session = await getSession()
-  console.log('Middleware - Session:', session)
-  console.log('Middleware - Request URL:', request.nextUrl.pathname)
+  
   const exists = publicOnlyUrls[request.nextUrl.pathname]
   if (!session.id) {
     if (!exists) {
@@ -32,7 +30,7 @@ export async function middleware(request: NextRequest) {
     }
   } else {
     if (exists) {
-      return NextResponse.redirect(new URL('/products', request.url))
+      return NextResponse.redirect(new URL('/home', request.url))
     }
   }
 }

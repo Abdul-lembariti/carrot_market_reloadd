@@ -37,14 +37,14 @@ export default function TabBar() {
       gridTemplateColumns="repeat(5, 100px) ">
       <Link
         color="white"
-        href="/products"
+        href="/home"
         className="flex flex-col items-center gap-px">
         {pathname === '/products' ? (
           <SolidHomeIcon height="30px" width="30px" />
         ) : (
           <OutlineHomeIcon height="30px" width="30px" />
         )}
-        <span>Products</span>
+        <span>Home</span>
       </Link>
       <Link
         color="white"
