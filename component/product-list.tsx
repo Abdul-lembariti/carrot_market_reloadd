@@ -33,7 +33,7 @@ export default function ProductList({ initialProducts }: ProductListProps) {
       {products.map((product) => (
         <ListProduct key={product.id} {...product} />
       ))}
-      {isLastPage ? (
+      {/* {isLastPage ? (
         <Text mx="auto">No more items</Text>
       ) : (
         <Button
@@ -55,7 +55,7 @@ export default function ProductList({ initialProducts }: ProductListProps) {
           }}>
           {loading ? 'Getting Products...' : 'Load More'}
         </Button>
-      )}
+      )} */}
     </Box>
   )
 }

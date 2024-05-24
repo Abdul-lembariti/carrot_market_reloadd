@@ -3,8 +3,12 @@ import db from '../../../lib/db'
 import ProductList from '../../../component/product-list'
 import { Prisma } from '@prisma/client'
 import { PlusIcon } from '@heroicons/react/24/solid'
+import { unstable_cache as nextCache, revalidatePath } from 'next/cache'
+
+const getCachedProducts = nextCache(getProducts, ['home-products'])
 
 async function getProducts() {
+  console.log('hit..')
   const products = await db.product.findMany({
     select: {
       title: true,
@@ -13,7 +17,7 @@ async function getProducts() {
       photo: true,
       id: true,
     },
-    take: 1,
+    // take: 1,
     orderBy: {
       createdAt: 'asc',
     },
@@ -23,11 +27,27 @@ async function getProducts() {
 
 export type IntialProducts = Prisma.PromiseReturnType<typeof getProducts>
 
+export const metadata = {
+  title: 'Home',
+}
+
+// export const dynamic = 'force-dynamic' changes the site to dynamic
+
+export const revalidate = 60 //changes to static but the site grap data to db after every 60 sec 
+
+
 export default async function Product() {
   const initialProduct = await getProducts()
+  const revalidate = async () => {
+    'use server'
+    revalidatePath('/home')
+  }
   return (
     <Box>
       <ProductList initialProducts={initialProduct} />
+      <form action={revalidate}>
+        <button>Revaledate</button>
+      </form>
       <Link
         href="/products/add"
         bgColor="orangered"

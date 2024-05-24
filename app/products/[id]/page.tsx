@@ -2,19 +2,24 @@ import { Avatar, Box, Image, Button, Link, Text } from '@chakra-ui/react'
 // import Image from 'next/image'
 import { notFound } from 'next/navigation'
 import db from '../../../lib/db'
-import getSession from '../../../lib/session'
 import { UserIcon } from '@heroicons/react/24/solid'
 import { formatToTzs } from '../../../lib/utitlity'
+import {
+  unstable_cache as nextCache,
+  revalidatePath,
+  revalidateTag,
+} from 'next/cache'
 
 async function getOwner(userId: number) {
-  const session = await getSession()
-  if (session.id) {
-    return session.id === userId
-  }
+  // const session = await getSession()
+  // if (session.id) {
+  //   return session.id === userId
+  // }
   return false
 }
 
 async function getProduct(id: number) {
+  console.log('product')
   const product = await db.product.findUnique({
     where: {
       id,
@@ -31,6 +36,34 @@ async function getProduct(id: number) {
   return product
 }
 
+const getCachedProduct = nextCache(getProduct, ['product-detail'], {
+  tags: ['product-detail', 'xxx'],
+})
+
+async function getProductTitle(id: number) {
+  console.log('title')
+  const product = await db.product.findUnique({
+    where: {
+      id,
+    },
+    select: {
+      title: true,
+    },
+  })
+  return product
+}
+
+const getCachedProductTitle = nextCache(getProductTitle, ['product-title'], {
+  tags: ['product-title', 'xxx'],
+})
+
+export async function generateMetadata({ params }: { params: { id: string } }) {
+  const product = await getCachedProductTitle(Number(params.id))
+  return {
+    title: `Product! ${product?.title}`,
+  }
+}
+
 export default async function ProductDetail({
   params,
 }: {
@@ -40,10 +73,15 @@ export default async function ProductDetail({
   if (isNaN(id)) {
     return notFound()
   }
-  const product = await getProduct(id)
+  const product = await getCachedProduct(id)
   const isOwner = await getOwner(product!.userId)
   if (!product) {
     return notFound()
+  }
+
+  const revalidate = async () => {
+    'use server'
+    revalidateTag('xxx')
   }
   return (
     <Box>
@@ -96,14 +134,16 @@ export default async function ProductDetail({
         alignItems="center">
         <Text>{formatToTzs(product.price)}</Text>
         {isOwner ? (
-          <Button
-            py="0.6175rem"
-            bgColor="orangered"
-            rounded="10px"
-            textColor="white"
-            px="1.25rem">
-            Delete Product
-          </Button>
+          <form action={revalidate}>
+            <Button
+              py="0.6175rem"
+              bgColor="orangered"
+              rounded="10px"
+              textColor="white"
+              px="1.25rem">
+              Revalidate
+            </Button>
+          </form>
         ) : (
           <Button
             py="0.6175rem"
@@ -126,4 +166,15 @@ export default async function ProductDetail({
       </Box>
     </Box>
   )
+}
+
+export const dynamicParams = true
+
+export async function generateStaticParams() {
+  const products = await db.product.findMany({
+    select: {
+      id: true,
+    },
+  })
+  return products.map((product) => ({ id: product.id + '' }))
 }
