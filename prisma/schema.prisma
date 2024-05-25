@@ -9,21 +9,23 @@ datasource db {
 }
 
 model User {
-  id        Int        @id @default(autoincrement())
-  username  String     @unique
-  email     String?    @unique
-  phone     String?    @unique
-  github_id String?    @unique
-  google_id String?    @unique
-  password  String?
-  avatar    String?
-  createdAt DateTime   @default(now())
-  updatedAt DateTime   @updatedAt
-  SMSToken  SMSToken[]
-  Product   Product[]
-  Post      Post[]
-  comments  Comment[]
-  Like      Like[]
+  id          Int        @id @default(autoincrement())
+  username    String     @unique
+  email       String?    @unique
+  phone       String?    @unique
+  github_id   String?    @unique
+  google_id   String?    @unique
+  password    String?
+  avatar      String?
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+  SMSToken    SMSToken[]
+  Product     Product[]
+  Post        Post[]
+  comments    Comment[]
+  Like        Like[]
+  chats_rooms ChatRoom[]
+  messages    Message[]
 }
 
 model SMSToken {
@@ -83,4 +85,26 @@ model Like {
   postId    Int
 
   @@id(name: "id", [userId, postId])
+}
+
+model ChatRoom {
+  id    String @id @default(cuid())
+  users User[]
+
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  messages  Message[]
+}
+
+model Message {
+  id      Int    @id @default(autoincrement())
+  payload String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  room       ChatRoom @relation(fields: [chatRoomId], references: [id])
+  user       User     @relation(fields: [userId], references: [id])
+  userId     Int
+  chatRoomId String
 }

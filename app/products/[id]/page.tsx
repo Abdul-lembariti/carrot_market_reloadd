@@ -1,6 +1,6 @@
 import { Avatar, Box, Image, Button, Link, Text } from '@chakra-ui/react'
 // import Image from 'next/image'
-import { notFound } from 'next/navigation'
+import { notFound, redirect } from 'next/navigation'
 import db from '../../../lib/db'
 import { UserIcon } from '@heroicons/react/24/solid'
 import { formatToTzs } from '../../../lib/utitlity'
@@ -9,6 +9,7 @@ import {
   revalidatePath,
   revalidateTag,
 } from 'next/cache'
+import getSession from '../../../lib/session'
 
 async function getOwner(userId: number) {
   // const session = await getSession()
@@ -41,7 +42,6 @@ const getCachedProduct = nextCache(getProduct, ['product-detail'], {
 })
 
 async function getProductTitle(id: number) {
-  console.log('title')
   const product = await db.product.findUnique({
     where: {
       id,
@@ -83,6 +83,30 @@ export default async function ProductDetail({
     'use server'
     revalidateTag('xxx')
   }
+
+  const createChatRoom = async () => {
+    "use server";
+    const session = await getSession();
+    const room = await db.chatRoom.create({
+      data: {
+        users: {
+          connect: [
+            {
+              id: product.userId,
+            },
+            {
+              id: session.id,
+            },
+          ],
+        },
+      },
+      select: {
+        id: true,
+      },
+    });
+    redirect(`/chats/${room.id}`);
+  };
+
   return (
     <Box>
       <Box>
@@ -144,25 +168,12 @@ export default async function ProductDetail({
               Revalidate
             </Button>
           </form>
-        ) : (
-          <Button
-            py="0.6175rem"
-            bgColor="orangered"
-            rounded="10px"
-            textColor="white"
-            px="1.25rem">
-            Buy Product
-          </Button>
-        )}
-        <Link
-          py="0.6175rem"
-          bgColor="orangered"
-          rounded="10px"
-          textColor="white"
-          px="1.25rem"
-          href={``}>
-          Chat
-        </Link>
+        ) : null}
+        <form action={createChatRoom}>
+          <button className="bg-orange-500 px-5 py-2.5 rounded-md text-white font-semibold">
+            Chats
+          </button>
+        </form>
       </Box>
     </Box>
   )
