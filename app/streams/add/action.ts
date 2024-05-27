@@ -32,16 +32,16 @@ export async function startStream(_: any, formData: FormData) {
   )
   const data = await response.json()
   const session = await getSession()
-  const stream = await db.liveStream.create({
-    data: {
-      title: result.data,
-      stream_id: data.result.uid,
-      stream_key: data.result.rtmps.streamkey,
-      userId: session.id,
-    },
-    select: {
-      id: true,
-    },
-  })
-  redirect(`/streams/${stream.id}`)
+  // const stream = await db.liveStream.create({
+  //   data: {
+  //     title: result.data,
+  //     stream_id: data.result.uid,
+  //     stream_key: data.result.rtmps.streamkey,
+  //     userId: session.id,
+  //   },
+  //   select: {
+  //     id: true,
+  //   },
+  // })
+  // redirect(`/streams/${stream.id}`)
 }

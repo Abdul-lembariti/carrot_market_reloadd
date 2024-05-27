@@ -28,7 +28,7 @@ export default async function Extras() {
         Extras!
       </Text>
       <p className="font-roboto">So much to learn</p>
-      <HackedComponent data={data} />
+      {/* <HackedComponent data={data} /> */}
     </Box>
   )
 }
