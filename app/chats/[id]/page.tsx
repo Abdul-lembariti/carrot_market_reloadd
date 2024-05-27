@@ -3,6 +3,7 @@ import db from '../../../lib/db'
 import getSession from '../../../lib/session'
 import { Prisma } from '@prisma/client'
 import ChatMessagesList from '../../../component/chat-room'
+import { Avatar } from '@chakra-ui/react'
 
 async function getRoom(id: string) {
   const room = await db.chatRoom.findUnique({
@@ -46,6 +47,20 @@ async function getMessages(chatRoomId: string) {
   return message
 }
 
+async function getUserProfile() {
+  const session = await getSession()
+  const user = await db.user.findUnique({
+    where: {
+      id: session.id!,
+    },
+    select: {
+      username: true,
+      avatar: true,
+    },
+  })
+  return user
+}
+
 export type IntialChatMessage = Prisma.PromiseReturnType<typeof getMessages>
 
 export default async function chatRoom({ params }: { params: { id: string } }) {
@@ -56,9 +71,17 @@ export default async function chatRoom({ params }: { params: { id: string } }) {
 
   const initialMessages = await getMessages(params.id)
   const session = await getSession()
-
+  const user = await getUserProfile()
+  if (!user) {
+    return notFound()
+  }
   return (
-    <ChatMessagesList userId={session.id!} intialMessage={initialMessages} />
+    <ChatMessagesList
+      chatRoomId={params.id}
+      userId={session.id!}
+      username={user.username}
+      avatar={user.avatar!}
+      intialMessage={initialMessages}
+    />
   )
 }
-/* ssdsdsdsdsddsdsddsdsdsdsxcxcxcdsdsdsd */
