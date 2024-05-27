@@ -112,21 +112,14 @@ export default async function Profile() {
       <form
         action={logOut}
         style={{ marginTop: 'auto', marginBottom: '120px' }}>
-        <Button
-          bgColor="red"
-          color="white"
-          borderRadius="10%"
-          padding="0.75rem"
-          display="flex"
-          alignItems="center"
-          justifyContent="center">
+        <button className="bg-red-600 text-white p-2 border-2 flex items-center justify-center">
           <ArrowLeftOnRectangleIcon
             height="20px"
             width="20px"
             style={{ marginRight: '0.5rem' }}
           />
           Log Out
-        </Button>
+        </button>
       </form>
     </Box>
   )
