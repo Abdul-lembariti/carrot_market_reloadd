@@ -1,13 +1,22 @@
 import { Box, Text } from '@chakra-ui/react'
+import HackedComponent from '../../component/hacked'
+import {
+  experimental_taintObjectReference,
+  experimental_taintUniqueValue,
+} from 'react'
 
-async function getData() {
-  const data = await fetch(
-    'https://nomad-movies.nomadcoders.workers.dev/movies'
-  )
+function getData() {
+  const key = {
+    apiKey: '2323',
+    secret: '1212',
+  }
+  // experimental_taintObjectReference('API Keys were leaked', secret) for the all objct
+  experimental_taintUniqueValue('Secrect key exposed', key, key.secret) //for the unique one only
+  return key
 }
 
 export default async function Extras() {
-  await getData()
+  const data = getData()
   return (
     <Box
       display="flex"
@@ -19,6 +28,7 @@ export default async function Extras() {
         Extras!
       </Text>
       <p className="font-roboto">So much to learn</p>
+      <HackedComponent data={data} />
     </Box>
   )
 }
