@@ -31,6 +31,20 @@ export default function AddProduct() {
     setPrev(url)
   }
 
+  const onSubmit = async (data: any) => {
+    const formData = new FormData()
+    formData.append('photo', data.photo[0])
+    formData.append('title', data.title)
+    formData.append('price', data.price)
+    formData.append('description', data.description)
+
+    try {
+      await uploadProduct(null, formData)
+    } catch (error) {
+      console.error('Error uploading product:', error)
+    }
+  }
+
   const [state, action] = useFormState(uploadProduct, null)
 
   return (
@@ -84,5 +98,3 @@ export default function AddProduct() {
     </Box>
   )
 }
-
-
